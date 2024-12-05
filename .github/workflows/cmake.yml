@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies (MacOS)
         if: ${{matrix.os == 'macos-latest' && matrix.linkage == 'static'}}
         run: |
-          brew install mad libgd boost libpng zlib
+          brew install mad libgd boost libpng zlib gd
 
       - name: Install Googletest
         shell: bash
