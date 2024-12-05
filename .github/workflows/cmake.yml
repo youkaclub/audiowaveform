@@ -121,7 +121,7 @@ jobs:
         if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
         run: |
           wget https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-src.tgz
-          tar xzf icu4c-74_1-src.tgz
+          tar xzf icu4c-76_1-src.tgz
           cd icu/source
           ./configure --enable-static
           make
