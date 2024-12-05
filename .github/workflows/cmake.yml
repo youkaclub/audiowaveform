@@ -142,7 +142,10 @@ jobs:
         shell: bash
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
-          cmake --build . --config $BUILD_TYPE --target package
+          cmake --build . --config $BUILD_TYPE --target package \
+            -D ICU_ROOT=/usr/local \
+            -D ICU_INCLUDE_DIR=/usr/local/include \
+            -D ICU_LIBRARIES="/usr/local/lib/libicudata.a;/usr/local/lib/libicuuc.a;/usr/local/lib/libicui18n.a"
 
       - name: Test (Ubuntu)
         if: ${{matrix.os == 'ubuntu-latest'}}
