@@ -133,7 +133,7 @@ jobs:
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
           export LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/opt/icu4c/lib
-          cmake --build . --config $BUILD_TYPE
+          cmake --build . --config $BUILD_TYPE --target package
 
       - name: Test (Ubuntu)
         if: ${{matrix.os == 'ubuntu-latest'}}
@@ -146,3 +146,10 @@ jobs:
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: ./audiowaveform_tests --gtest_filter=-ProgressReporterTest.*:*Opus*
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audiowaveform-${{matrix.os}}-${{matrix.linkage}}
+          path: ${{github.workspace}}/build
+          retention-days: 1
