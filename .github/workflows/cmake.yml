@@ -54,17 +54,6 @@ jobs:
           make
           sudo make install
 
-      - name: Install libopus
-        if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
-        run: |
-          wget https://github.com/xiph/opus/archive/v1.3.1.tar.gz
-          tar xzf v1.3.1.tar.gz
-          cd opus-1.3.1
-          ./autogen.sh
-          ./configure --enable-static --enable-shared=no
-          make
-          sudo make install
-
       - name: Install libvorbis
         if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
         run: |
@@ -76,7 +65,18 @@ jobs:
           make
           sudo make install
 
-      - name: Install FLAC
+      - name: Install libopus
+        if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
+        run: |
+          wget https://github.com/xiph/opus/archive/v1.3.1.tar.gz
+          tar xzf v1.3.1.tar.gz
+          cd opus-1.3.1
+          ./autogen.sh
+          ./configure --enable-static --enable-shared=no
+          make
+          sudo make install
+
+      - name: Install libFLAC
         if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
         run: |
           wget https://github.com/xiph/flac/archive/1.3.3.tar.gz
@@ -103,8 +103,17 @@ jobs:
           cd libsndfile-1.1.0
           mkdir build
           cd build
-          cmake -D ENABLE_MPEG=0 -D ENABLE_TESTING=0 -D BUILD_SHARED_LIBS=0 -D BUILD_REGTEST=0 -D BUILD_PROGRAMS=0 -D BUILD_TESTING=0 -D BUILD_EXAMPLES=0 ..
-          make
+          cmake .. \
+            -D ENABLE_MPEG=0 \
+            -D ENABLE_TESTING=0 \
+            -D BUILD_SHARED_LIBS=0 \
+            -D BUILD_REGTEST=0 \
+            -D BUILD_PROGRAMS=0 \
+            -D BUILD_TESTING=0 \
+            -D BUILD_EXAMPLES=0 \
+            -D CMAKE_POSITION_INDEPENDENT_CODE=ON \
+            -D CMAKE_INSTALL_PREFIX=/usr/local
+          make -j$(nproc)
           sudo make install
 
       - name: Install libid3tag
@@ -113,7 +122,7 @@ jobs:
           wget http://sourceforge.net/projects/mad/files/libid3tag/0.15.1b/libid3tag-0.15.1b.tar.gz
           tar xzf libid3tag-0.15.1b.tar.gz
           cd libid3tag-0.15.1b
-          ./configure --enable-static
+          ./configure --enable-static --disable-shared
           make
           sudo make install
 
