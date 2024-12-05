@@ -135,17 +135,19 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D BUILD_STATIC=${{matrix.linkage == 'static'}}
+        run: cmake $GITHUB_WORKSPACE \
+          -D CMAKE_BUILD_TYPE=$BUILD_TYPE \
+          -D BUILD_STATIC=${{matrix.linkage == 'static'}} \
+          -D ICU_ROOT=/usr/local \
+          -D ICU_INCLUDE_DIR=/usr/local/include \
+          -D ICU_LIBRARIES="/usr/local/lib/libicudata.a;/usr/local/lib/libicuuc.a;/usr/local/lib/libicui18n.a"
 
       - name: Build
         working-directory: ${{github.workspace}}/build
         shell: bash
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
-          cmake --build . --config $BUILD_TYPE --target package \
-            -D ICU_ROOT=/usr/local \
-            -D ICU_INCLUDE_DIR=/usr/local/include \
-            -D ICU_LIBRARIES="/usr/local/lib/libicudata.a;/usr/local/lib/libicuuc.a;/usr/local/lib/libicui18n.a"
+          cmake --build . --config $BUILD_TYPE --target package
 
       - name: Test (Ubuntu)
         if: ${{matrix.os == 'ubuntu-latest'}}
