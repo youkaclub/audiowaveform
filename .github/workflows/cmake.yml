@@ -123,7 +123,7 @@ jobs:
           wget https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-src.tgz
           tar xzf icu4c-76_1-src.tgz
           cd icu/source
-          ./configure --enable-static
+          ./configure --enable-static --disable-shared --prefix=/usr/local
           make
           sudo make install
 
