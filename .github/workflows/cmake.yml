@@ -95,6 +95,26 @@ jobs:
           tar xzf release-1.12.1.tar.gz
           ln -s googletest-release-1.12.1 googletest
 
+      - name: Install libid3tag
+        if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
+        run: |
+          wget http://sourceforge.net/projects/mad/files/libid3tag/0.15.1b/libid3tag-0.15.1b.tar.gz
+          tar xzf libid3tag-0.15.1b.tar.gz
+          cd libid3tag-0.15.1b
+          ./configure --enable-static --disable-shared
+          make
+          sudo make install
+
+      - name: Install ICU
+        if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
+        run: |
+          wget https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-src.tgz
+          tar xzf icu4c-76_1-src.tgz
+          cd icu/source
+          ./configure --enable-static --disable-shared --prefix=/usr/local
+          make
+          sudo make install
+
       - name: Install libsndfile
         if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
         run: |
@@ -116,25 +136,12 @@ jobs:
           make -j$(nproc)
           sudo make install
 
-      - name: Install libid3tag
-        if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
+      - name: Set compiler flags
         run: |
-          wget http://sourceforge.net/projects/mad/files/libid3tag/0.15.1b/libid3tag-0.15.1b.tar.gz
-          tar xzf libid3tag-0.15.1b.tar.gz
-          cd libid3tag-0.15.1b
-          ./configure --enable-static --disable-shared
-          make
-          sudo make install
-
-      - name: Install ICU
-        if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
-        run: |
-          wget https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-src.tgz
-          tar xzf icu4c-76_1-src.tgz
-          cd icu/source
-          ./configure --enable-static --disable-shared --prefix=/usr/local
-          make
-          sudo make install
+          export LDFLAGS="-L/usr/local/lib"
+          export CPPFLAGS="-I/usr/local/include"
+          echo "LDFLAGS=$LDFLAGS" >> $GITHUB_ENV
+          echo "CPPFLAGS=$CPPFLAGS" >> $GITHUB_ENV
 
       - name: Configure CMake
         # Use a bash shell so we can use the same syntax for environment variable
@@ -147,14 +154,14 @@ jobs:
         run: cmake $GITHUB_WORKSPACE \
           -D CMAKE_BUILD_TYPE=$BUILD_TYPE \
           -D BUILD_STATIC=${{matrix.linkage == 'static'}} \
-          -D ICU_ROOT=/usr/local \
-          -D ICU_INCLUDE_DIR=/usr/local/include \
+          -D ZLIB_LIBRARY=/usr/local/lib/libz.a \
+          -D PNG_LIBRARY=/usr/local/lib/libpng.a \
+          -D FLAC_LIBRARIES=/usr/local/lib/libFLAC.a \
+          -D OGG_LIBRARIES=/usr/local/lib/libogg.a \
+          -D VORBIS_LIBRARIES="/usr/local/lib/libvorbis.a;/usr/local/lib/libvorbisenc.a" \
           -D ICU_LIBRARIES="/usr/local/lib/libicudata.a;/usr/local/lib/libicuuc.a;/usr/local/lib/libicui18n.a" \
-          -D FLAC_LIBRARIES="/usr/local/lib/libFLAC.a" \
-          -D VORBIS_LIBRARIES="/usr/local/lib/libvorbis.a;/usr/local/lib/libvorbisenc.a;/usr/local/lib/libogg.a" \
-          -D OGG_LIBRARIES="/usr/local/lib/libogg.a" \
-          -D OPUS_LIBRARIES="/usr/local/lib/libopus.a" \
-          -D LIBID3TAG_LIBRARIES="/usr/local/lib/libid3tag.a"
+          -D ICU_INCLUDE_DIR=/usr/local/include \
+          -D ICU_ROOT=/usr/local
 
       - name: Build
         working-directory: ${{github.workspace}}/build
