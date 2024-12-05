@@ -54,6 +54,17 @@ jobs:
           make
           sudo make install
 
+      - name: Install libvorbis
+        if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
+        run: |
+          wget https://github.com/xiph/vorbis/archive/v1.3.7.tar.gz
+          tar xzf v1.3.7.tar.gz
+          cd vorbis-1.3.7
+          ./autogen.sh
+          ./configure --enable-shared=no
+          make
+          sudo make install
+
       - name: Install Googletest
         shell: bash
         working-directory: ${{github.workspace}}
