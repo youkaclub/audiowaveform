@@ -140,7 +140,12 @@ jobs:
           -D BUILD_STATIC=${{matrix.linkage == 'static'}} \
           -D ICU_ROOT=/usr/local \
           -D ICU_INCLUDE_DIR=/usr/local/include \
-          -D ICU_LIBRARIES="/usr/local/lib/libicudata.a;/usr/local/lib/libicuuc.a;/usr/local/lib/libicui18n.a"
+          -D ICU_LIBRARIES="/usr/local/lib/libicudata.a;/usr/local/lib/libicuuc.a;/usr/local/lib/libicui18n.a" \
+          -D FLAC_LIBRARIES="/usr/local/lib/libFLAC.a" \
+          -D VORBIS_LIBRARIES="/usr/local/lib/libvorbis.a;/usr/local/lib/libvorbisenc.a;/usr/local/lib/libogg.a" \
+          -D OGG_LIBRARIES="/usr/local/lib/libogg.a" \
+          -D OPUS_LIBRARIES="/usr/local/lib/libopus.a" \
+          -D LIBID3TAG_LIBRARIES="/usr/local/lib/libid3tag.a"
 
       - name: Build
         working-directory: ${{github.workspace}}/build
