@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies (MacOS)
         if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
         run: |
-          brew install mad libgd boost libpng zlib
+          brew install mad libgd boost libpng zlib autoconf automake libtool gettext
 
       - name: Install FLAC
         if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
