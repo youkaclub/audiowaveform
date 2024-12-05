@@ -57,7 +57,7 @@ jobs:
       - name: Install libvorbis
         if: ${{matrix.os == 'macos-13' && matrix.linkage == 'static'}}
         run: |
-          wget https://github.com/xiph/vorbis/archive/master.zip
+          wget https://github.com/youkaclub/vorbis/archive/master.zip
           unzip master.zip
           cd vorbis-master
           ./autogen.sh
